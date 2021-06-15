@@ -11,6 +11,9 @@ from test import batched_predict
 
 import MTL_utils as helper
 
+def generate_SR_lowest_res_indv(model, img_path, output_folder):
+    os.system("mkdir -p " + output_folder)
+    helper.generate_SR_list(model, img_path, output_folder)
 
 def generate_SR_lowest_res(model, input_path, result_path):
     img_file_list = os.listdir(input_path)
@@ -66,6 +69,9 @@ if __name__ == '__main__':
     elif args.mode == "SR_pred_res":
         ## Generate SR results from predicted results
         generate_SR_pred_res(model, args.input_path, args.result_path)
+    elif args.mode == "SR_lowest_res_indv":
+        ## Generate SR results from lowest resolution for one individual input
+        generate_SR_lowest_res_indv(model, args.input_path, args.result_path)
     else:
         print("Error -- Unrecognized mode")
 
