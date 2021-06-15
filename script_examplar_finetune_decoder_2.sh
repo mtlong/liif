@@ -1,8 +1,8 @@
 
-CONFIG=./configs/train-examplar/finetune_rdn-liif-encoder.yaml
+CONFIG=./configs/train-examplar/finetune_rdn-liif-encoder_2.yaml
 NAME=examplar_finetune
-INPUT_PATH_PREFIX=/mnt/HDD1/home/mtlong/workspace/2021/Aggregative_Learning/Sand_Box/liif/data/samples/4X
-RESULT_PATH_PREFIX=/mnt/HDD1/home/mtlong/workspace/2021/Aggregative_Learning/Sand_Box/liif/data/samples/Results/test_examplar_finetune_decoder
+INPUT_PATH_PREFIX=./data/samples/4X
+RESULT_PATH_PREFIX=./data/samples/Results/test_examplar_finetune_decoder
 GPU_ID=0
 
 
