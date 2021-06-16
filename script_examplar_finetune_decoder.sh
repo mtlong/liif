@@ -3,6 +3,7 @@ CONFIG=./configs/train-examplar/finetune_rdn-liif-encoder_1.yaml
 NAME=examplar_finetune
 INPUT_PATH_PREFIX=./data/samples/4X
 RESULT_PATH_PREFIX=./data/samples/Results/test_examplar_finetune_decoder
+GT_PATH=./data/samples/GT
 GPU_ID=1
 
 # IMG=0802.png

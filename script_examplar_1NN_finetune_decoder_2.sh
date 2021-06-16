@@ -1,10 +1,19 @@
 
-CONFIG=./configs/train-examplar/finetune_rdn-liif-encoder_2.yaml
+CONFIG=./configs/train-examplar/finetune_rdn-liif-encoder_1NN_2.yaml
 NAME=examplar_finetune
 INPUT_PATH_PREFIX=./data/samples/4X
 RESULT_PATH_PREFIX=./data/samples/Results/test_examplar_finetune_decoder
 GT_PATH=./data/samples/GT
-GPU_ID=0
+GPU_ID=1
+
+
+IMG=0834
+python train_liif_examplar.py --config $CONFIG --name $NAME --tag $IMG.png --gpu $GPU_ID
+MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
+INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
+RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
+
+python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
 
 
 IMG=0835
