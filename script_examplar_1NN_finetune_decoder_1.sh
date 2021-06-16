@@ -4,6 +4,7 @@ NAME=examplar_finetune
 INPUT_PATH_PREFIX=./data/samples/4X
 RESULT_PATH_PREFIX=./data/samples/Results/test_examplar_finetune_decoder
 GT_PATH=./data/samples/GT
+MODE=SR_lowest_res_indv
 
 GPU_ID=0
 
