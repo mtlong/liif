@@ -125,6 +125,23 @@ def to_pixel_samples(img):
     rgb = img.view(3, -1).permute(1, 0)
     return coord, rgb
 
+def to_pixel_samples_2D(img, sample_q):
+    """ Convert the image to coord-RGB pairs while sampling continous 2D blocks.
+        img: Tensor, (3, H, W)
+    """
+    hr_coord = make_coord(img.shape[-2:])
+    hr_rgb = img.view(3, -1).permute(1, 0)
+    if sample_q is not None:
+        idx_map = np.arange(len(hr_coord)).reshape((img.shape[-2], img.shape[-1]))
+        sample_h = int(math.sqrt(sample_q))
+        sample_w = sample_h
+        start_h = np.random.randint(0, idx_map.shape[0] - sample_h + 1)
+        start_w = np.random.randint(0, idx_map.shape[1] - sample_w + 1)
+        idx_map_select = idx_map[start_h:start_h + sample_h, start_w:start_w + sample_w]
+        sample_lst = idx_map_select.flatten()
+        hr_coord = hr_coord[sample_lst]
+        hr_rgb = hr_rgb[sample_lst]
+    return hr_coord, hr_rgb
 
 def calc_psnr(sr, hr, dataset=None, scale=1, rgb_range=1):
     diff = (sr - hr) / rgb_range

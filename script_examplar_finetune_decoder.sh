@@ -7,28 +7,28 @@ GT_PATH=./data/samples/GT
 MODE=SR_lowest_res_indv
 GPU_ID=1
 
-IMG=0802
-MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
-INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
-RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
+# IMG=0802
+# MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
+# INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
+# RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
 
-python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
-
-
-IMG=0803
-MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
-INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
-RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
-
-python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
+# python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
 
 
-IMG=0804
-MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
-INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
-RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
+# IMG=0803
+# MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
+# INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
+# RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
 
-python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
+# python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
+
+
+# IMG=0804
+# MODEL_PATH=./save/examplar_finetune_$IMG.png/epoch-last.pth
+# INPUT_PATH=$INPUT_PATH_PREFIX/$IMG.png
+# RESULT_PATH=$RESULT_PATH_PREFIX/$IMG.png
+
+# python MTL_inspect_cross_scale.py --gpu $GPU_ID --model $MODEL_PATH --input_path $INPUT_PATH --gt_path $GT_PATH --result_path $RESULT_PATH --mode $MODE 
 
 
 IMG=0809
