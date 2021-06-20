@@ -92,7 +92,7 @@ def prepare_training():
 def train(train_loader, model, optimizer):
     model.train()    
     loss_fn = nn.L1Loss()
-    if config['lpips_weight'] != 'none':
+    if config.get('lpips_weight') is not None:
         use_lpips = True
         loss_fn_vgg = lpips.LPIPS(net = 'vgg').cuda()
     else:

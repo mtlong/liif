@@ -87,12 +87,12 @@ def prepare_training():
 def train(train_loader, model, optimizer):
     model.train()    
     loss_fn = nn.L1Loss()
-    if config['lpips_weight'] != 'none':
+    if config.get('lpips_weight') is not None:
         use_lpips = True
         loss_fn_vgg = lpips.LPIPS(net = 'vgg').cuda()
     else:
         use_lpips = False
-    if config['enc_match_loss_weight'] is not None:
+    if config.get('enc_match_loss_weight') is not None:
         use_encoder_matching_loss = True   
     else:
         use_encoder_matching_loss = False      

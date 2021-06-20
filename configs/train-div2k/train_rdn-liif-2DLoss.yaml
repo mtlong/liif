@@ -1,4 +1,4 @@
-resume: ./save/Loss_2DL1_01_sampleq_2304
+resume: ./save/Loss_2DL1_01_sampleq_2304_backup/epoch-last.pth
 
 train_dataset:
   dataset:
