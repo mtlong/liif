@@ -1,3 +1,5 @@
+resume: ./save/Loss_2DL1_01_sampleq_2304
+
 train_dataset:
   dataset:
     name: image-folder
