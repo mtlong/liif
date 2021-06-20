@@ -104,8 +104,6 @@ def train(train_loader, model, optimizer):
 
         gt = (batch['gt'] - gt_sub) / gt_div
         loss = loss_fn(pred, gt)
-        print(pred.shape)
-        print(gt.shape)
 
         train_loss.add(loss.item())
 

@@ -62,27 +62,23 @@ def make_data_loaders():
 
 
 def prepare_training():
-    if config.get('resume') is not None:
-        sv_file = torch.load(config['resume'])
-        model = models.make(sv_file['model'], load_sd=True).cuda()
-        optimizer = utils.make_optimizer(
-            model.parameters(), sv_file['optimizer'], load_sd=True)
-        epoch_start = sv_file['epoch'] + 1
-        if config.get('multi_step_lr') is None:
-            lr_scheduler = None
-        else:
-            lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
-        for _ in range(epoch_start - 1):
-            lr_scheduler.step()
+    sv_file = torch.load(config['pretrained'])
+    fixed_part = config.get('fixed_part')
+    model = models.make_pretrained(sv_file['model'], fixed_part = fixed_part).cuda()
+    if fixed_part is not None:
+        if fixed_part == "encoder":
+            print("Finetuning decoder")
+            optimizer = utils.make_optimizer(model.imnet.parameters(), config['optimizer'])
+        elif fixed_part == "decoder":
+            print("Finetuning encoder")
+            optimizer = utils.make_optimizer(model.encoder.parameters(), config['optimizer'])
     else:
-        model = models.make(config['model']).cuda()
-        optimizer = utils.make_optimizer(
-            model.parameters(), config['optimizer'])
-        epoch_start = 1
-        if config.get('multi_step_lr') is None:
-            lr_scheduler = None
-        else:
-            lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
+        optimizer = utils.make_optimizer(model.parameters(), config['optimizer'])
+    epoch_start = 1
+    if config.get('multi_step_lr') is None:
+        lr_scheduler = None
+    else:
+        lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
 
     log('model: #params={}'.format(utils.compute_num_params(model, text=True)))
     return model, optimizer, epoch_start, lr_scheduler
@@ -96,6 +92,10 @@ def train(train_loader, model, optimizer):
         loss_fn_vgg = lpips.LPIPS(net = 'vgg').cuda()
     else:
         use_lpips = False
+    if config['enc_match_loss_weight'] is not None:
+        use_encoder_matching_loss = True   
+    else:
+        use_encoder_matching_loss = False      
     train_loss = utils.Averager()
 
     data_norm = config['data_norm']
@@ -122,6 +122,11 @@ def train(train_loader, model, optimizer):
         if use_lpips:
             vgg_loss = config['lpips_weight'] * loss_fn_vgg(pred.view(-1, 3, sample_w, sample_w), gt.view(-1, 3, sample_w, sample_w)).mean()
             loss += vgg_loss
+        if use_encoder_matching_loss:
+            gt_feat = model.gen_feat(gt.view(-1, 3, sample_w, sample_w)).detach().clone()
+            pred_feat = model.gen_feat(pred.view(-1, 3, sample_w, sample_w))
+            enc_match_loss = loss_fn(gt_feat, pred_feat)
+            loss += config['enc_match_loss_weight'] * enc_match_loss
         train_loss.add(loss.item())
 
         optimizer.zero_grad()
