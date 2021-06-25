@@ -1,0 +1,66 @@
+train_data_root: ./data/samples/Nearest_Neighbors/Manual
+gt_data_root: ./data/samples/GT
+pretrained: ./save/Loss_2DLPIPS_01_sampleq_2304/epoch-last.pth
+fixed_part: encoder
+lpips_weight: 0.3
+
+train_dataset:
+  dataset:
+    name: image-folder
+    args:
+      root_path: ./data/samples/train_temp_space_1/train
+      repeat: 20
+      cache: in_memory
+  wrapper:
+    name: sr-implicit-2d
+    args:
+      inp_size: 48
+      scale_max: 3
+      augment: true
+      sample_q: 2304
+  batch_size: 16
+
+val_dataset:
+  dataset:
+    name: image-folder
+    args:
+      root_path: ./data/samples/train_temp_space_1/val
+      first_k: 10
+      repeat: 160
+      cache: in_memory
+  wrapper:
+    name: sr-implicit-2d
+    args:
+      inp_size: 48
+      scale_max: 3
+      sample_q: 2304
+  batch_size: 1
+
+data_norm:
+  inp: {sub: [0.5], div: [0.5]}
+  gt: {sub: [0.5], div: [0.5]}
+
+model:
+  name: liif
+  args:
+    encoder_spec:
+      name: rdn
+      args:
+        no_upsampling: true
+    imnet_spec:
+      name: mlp
+      args:
+        out_dim: 3
+        hidden_list: [256, 256, 256, 256]
+
+optimizer:
+  name: adam
+  args:
+    lr: 1.e-4
+epoch_max: 300
+multi_step_lr:
+  milestones: [200, 400, 600, 800]
+  gamma: 0.5
+
+epoch_val: 1
+epoch_save: 100

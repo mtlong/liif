@@ -4,7 +4,7 @@ NAME=Loss_2DL1
 GPU_ID=1
 VER=01_sampleq_2304
 
-# python train_liif_2DLoss.py --config $CONFIG --name $NAME --tag $VER --gpu $GPU_ID
+python train_liif_2DLoss.py --config $CONFIG --name $NAME --tag $VER --gpu $GPU_ID
 
 ## Generate test result
 MODEL_PATH=./save/Loss_2DL1_$VER/epoch-last.pth
