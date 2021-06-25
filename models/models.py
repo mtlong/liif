@@ -43,6 +43,10 @@ def make_pretrained(model_spec, args=None, fixed_part=None):
             model.encoder = model.encoder.eval()
             for param in model.encoder.parameters():
                 param.requires_grad = False        
+    else:
+        print("Finetuning full model")
+        model = models[model_spec['name']](**model_args)
+        model.load_state_dict(model_spec['sd'])
     return model
 
 def make_finetune(model_spec, args=None, fixed_part=None):
@@ -51,10 +55,10 @@ def make_finetune(model_spec, args=None, fixed_part=None):
         model_args.update(args)
     else:
         model_args = model_spec['args']
-    model_pretrained = models[model_spec['name']](**model_args)
-    model_pretrained.load_state_dict(model_spec['sd'])
-    model = models[model_spec['name']](**model_args)
     if fixed_part is not None:
+        model_pretrained = models[model_spec['name']](**model_args)
+        model_pretrained.load_state_dict(model_spec['sd'])
+        model = models[model_spec['name']](**model_args)
         if fixed_part == "decoder":
             model.encoder = model_pretrained.encoder
             model.imnet = model_pretrained.imnet
@@ -66,5 +70,9 @@ def make_finetune(model_spec, args=None, fixed_part=None):
             model.encoder = model_pretrained.encoder
             model.encoder = model.encoder.eval()
             for param in model.encoder.parameters():
-                param.requires_grad = False        
+                param.requires_grad = False      
+    else:
+        print("Finetuning full model")
+        model = models[model_spec['name']](**model_args)
+        model.load_state_dict(model_spec['sd'])
     return model
