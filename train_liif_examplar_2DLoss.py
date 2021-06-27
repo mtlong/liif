@@ -61,23 +61,33 @@ def make_data_loaders():
 
 
 def prepare_training():
-    sv_file = torch.load(config['pretrained'])
-    fixed_part = config.get('fixed_part')
-    model = models.make_finetune(sv_file['model'], fixed_part = fixed_part).cuda()
-    if fixed_part is not None:
-        if fixed_part == "encoder":
-            print("Finetuning decoder")
-            optimizer = utils.make_optimizer(model.imnet.parameters(), config['optimizer'])
-        elif fixed_part == "decoder":
-            print("Finetuning encoder")
-            optimizer = utils.make_optimizer(model.encoder.parameters(), config['optimizer'])
+    if config.get('pretrained') is not None:
+        sv_file = torch.load(config['pretrained'])
+        fixed_part = config.get('fixed_part')
+        model = models.make_finetune(sv_file['model'], fixed_part = fixed_part).cuda()
+        if fixed_part is not None:
+            if fixed_part == "encoder":
+                print("Finetuning decoder")
+                optimizer = utils.make_optimizer(model.imnet.parameters(), config['optimizer'])
+            elif fixed_part == "decoder":
+                print("Finetuning encoder")
+                optimizer = utils.make_optimizer(model.encoder.parameters(), config['optimizer'])
+        else:
+            optimizer = utils.make_optimizer(model.parameters(), config['optimizer'])
+        epoch_start = 1
+        if config.get('multi_step_lr') is None:
+            lr_scheduler = None
+        else:
+            lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
     else:
-        optimizer = utils.make_optimizer(model.parameters(), config['optimizer'])
-    epoch_start = 1
-    if config.get('multi_step_lr') is None:
-        lr_scheduler = None
-    else:
-        lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
+        model = models.make(config['model']).cuda()
+        optimizer = utils.make_optimizer(
+            model.parameters(), config['optimizer'])
+        epoch_start = 1
+        if config.get('multi_step_lr') is None:
+            lr_scheduler = None
+        else:
+            lr_scheduler = MultiStepLR(optimizer, **config['multi_step_lr'])
 
     log('model: #params={}'.format(utils.compute_num_params(model, text=True)))
     return model, optimizer, epoch_start, lr_scheduler
