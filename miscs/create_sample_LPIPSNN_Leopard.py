@@ -84,8 +84,15 @@ if __name__ == '__main__':
     start_idx = int(args.startIdx)
     end_idx = int(args.endIdx)
 
-    database_folder = "/mnt/SSD/Datasets/DIV2K_train_HR_Patches"
+    database_folder = "/media/malong/PNYSSD/Datasets/DIV2K_train_HR_Patches"
     output_root = "../data/samples/Nearest_Neighbors/LPIPS"
     img_folder = "../data/samples/4X"
     
     generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_idx, DEVICE)
+
+    # python create_sample_LPIPSNN_Leopard.py --startIdx 1 --endIdx 3 --gpu 0
+    # python create_sample_LPIPSNN_Leopard.py --startIdx 3 --endIdx 5 --gpu 0
+    # python create_sample_LPIPSNN_Leopard.py --startIdx 6 --endIdx 9 --gpu 1
+    # python create_sample_LPIPSNN_Leopard.py --startIdx 9 --endIdx 11 --gpu 1
+    # python create_sample_LPIPSNN_Leopard.py --startIdx 14 --endIdx 18 --gpu 2
+    # python create_sample_LPIPSNN_Leopard.py --startIdx 18 --endIdx 22 --gpu 2
