@@ -11,7 +11,7 @@ from torchvision import transforms
 
 
 CROP_LIST = [48 * 4, 48 * 8, 48 * 12, 48 * 16, 48 * 20, 48 * 24]
-SAMPLING_LIST = [8 * 8, 5 * 5, 6, 4, 2, 1]
+SAMPLING_LIST = [16 * 16, 12 * 12, 10 * 10, 15, 4, 2]
 
 def create_and_save_crops(img_org, filename, output_folder, crop_size, num_samples):
     min_size = min([img_org.shape[0], img_org.shape[1]])
@@ -45,5 +45,5 @@ def create_patch_data(source_folder, output_folder):
 
 if __name__ == '__main__':
     div2k_train_folder = "../data/DIV2K_train_HR"
-    output_folder = "../data/DIV2K_train_HR_Patches"
+    output_folder = "/mnt/SSD/Datasets/DIV2K_train_HR_Patches"
     create_patch_data(div2k_train_folder, output_folder)

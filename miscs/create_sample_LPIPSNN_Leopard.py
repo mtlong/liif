@@ -10,15 +10,16 @@ from torchvision import transforms
 import lpips
 import argparse
 
-CROP_LIST = [48 * 7, 48, 48 * 2, 48 * 3, 48 * 4, 48 * 6]
-SAMPLING_LIST = [2, 25, 16, 9, 4, 2]
+CROP_LIST = [48, 48 * 2, 48 * 3, 48 * 4, 48 * 6, 48 * 7]
+SAMPLING_LIST = [50, 30, 16, 9, 4, 2]
 
 def get_crop_size(img_filename):
     l = img_filename.split("_")
     return int(l[2])
 
-def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_folder, output_folder, DEVICE):
+def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_folder, output_folder, dist_list_filename, DEVICE):
     copied_file_list = []
+    dist_dict = {}
     ## Crop the image
     min_size = min([img.shape[1], img.shape[2]])
 
@@ -41,7 +42,7 @@ def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_fold
             if file_path in copied_file_list:
                 continue
             database_patch_size = get_crop_size(database_filename)
-            if database_patch_size <= crop_size:
+            if database_patch_size <= crop_size * 4:
                 # print("Database patch size" + str(database_patch_size) + " is smaller than query size " + str(crop_size) + " -- skip")
                 continue
             database_img = transforms.ToTensor()(transforms.Resize((crop_size, crop_size))(Image.open(file_path).convert('RGB'))).to(DEVICE)
@@ -50,16 +51,19 @@ def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_fold
             if dist < min_dist:
                 min_dist = dist
                 curr_NN_filepath = file_path
+                curr_filename = database_filename
         os.system("cp " + curr_NN_filepath + " " + output_folder)
         copied_file_list.append(curr_NN_filepath)
+        dist_dict[curr_filename] = min_dist
+    pickle.dump(dist_dict, open(dist_list_filename, "wb"))
 
-def collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_folder, DEVICE):
+def collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_folder, dist_list_filename, DEVICE):
     img = transforms.ToTensor()(Image.open(file_path).convert('RGB')).to(DEVICE)
     img = (img - 0.5) / 0.5
     for idx in range(len(CROP_LIST)):
         crop_size = CROP_LIST[idx]
         num_samples = SAMPLING_LIST[idx]
-        collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_folder, output_folder, DEVICE) 
+        collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_folder, output_folder, dist_list_filename, DEVICE) 
 
 def generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_idx, DEVICE):
     loss_fn_vgg = lpips.LPIPS(net = 'vgg').to(DEVICE)
@@ -71,8 +75,10 @@ def generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_i
         print("processing Image:" + filename)
         file_path = os.path.join(img_folder, filename)
         output_folder = os.path.join(output_root, filename)
+        dist_list_filename = os.path.join(output_root, filename + "_distlist.pickle")
         os.system("mkdir -p " + output_folder)
-        collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_folder, DEVICE)
+        collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_root, output_folder, dist_list_filename, DEVICE)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
