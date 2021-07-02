@@ -12,6 +12,17 @@ import argparse
 
 CROP_LIST = [48, 48 * 2, 48 * 3, 48 * 4, 48 * 6, 48 * 7]
 SAMPLING_LIST = [50, 30, 16, 9, 4, 2]
+FILE_LIST = ["0802.png", "0803.png", 
+             "0804.png", "0809.png", 
+             "0810.png", "0818.png", 
+             "0820.png", "0822.png",
+             "0823.png", "0825.png", 
+             "0826.png", "0834.png", 
+             "0835.png", "0836.png", 
+             "0837.png", "0839.png", 
+             "0846.png", "0849.png", 
+             "0855.png", "0879.png", 
+             "0883.png", "0898.png"]
 
 def get_crop_size(img_filename):
     l = img_filename.split("_")
@@ -67,7 +78,7 @@ def collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_folder, dis
 
 def generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_idx, DEVICE):
     loss_fn_vgg = lpips.LPIPS(net = 'vgg').to(DEVICE)
-    file_list = os.listdir(img_folder)
+    file_list = FILE_LIST
     if end_idx > len(file_list):
         end_idx = len(file_list)
     for idx in range(start_idx, end_idx):
@@ -77,7 +88,7 @@ def generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_i
         output_folder = os.path.join(output_root, filename)
         dist_list_filename = os.path.join(output_root, filename + "_distlist.pickle")
         os.system("mkdir -p " + output_folder)
-        collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_root, output_folder, dist_list_filename, DEVICE)
+        collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_folder, dist_list_filename, DEVICE)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -94,3 +105,6 @@ if __name__ == '__main__':
     img_folder = "../data/samples/4X"
     
     generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_idx, DEVICE)
+
+# python create_sample_LPIPSNN.py --startIdx 0 --endIdx 3 --gpu 1
+# python create_sample_LPIPSNN.py --startIdx 3 --endIdx 6 --gpu 1
