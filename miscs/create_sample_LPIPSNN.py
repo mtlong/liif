@@ -46,6 +46,7 @@ def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_fold
         database_filelist = os.listdir(database_folder)
         min_dist = 10
         curr_NN_filepath = ""
+        curr_filename = ""
         for database_filename in database_filelist:
             if database_filename in copied_file_list:
                 continue
@@ -53,7 +54,11 @@ def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_fold
             if file_path in copied_file_list:
                 continue
             database_patch_size = get_crop_size(database_filename)
-            if database_patch_size <= crop_size * 4:
+            if database_patch_size < 48 * 6:
+                if database_patch_size <= crop_size * 4:
+                    # print("Database patch size" + str(database_patch_size) + " is smaller than query size " + str(crop_size) + " -- skip")
+                    continue
+            if database_patch_size < crop_size:
                 # print("Database patch size" + str(database_patch_size) + " is smaller than query size " + str(crop_size) + " -- skip")
                 continue
             database_img = transforms.ToTensor()(transforms.Resize((crop_size, crop_size))(Image.open(file_path).convert('RGB'))).to(DEVICE)
@@ -63,9 +68,10 @@ def collect_NN_from_crop(loss_fn_vgg, img, crop_size, num_samples, database_fold
                 min_dist = dist
                 curr_NN_filepath = file_path
                 curr_filename = database_filename
-        os.system("cp " + curr_NN_filepath + " " + output_folder)
-        copied_file_list.append(curr_NN_filepath)
-        dist_dict[curr_filename] = min_dist
+        if len(curr_filename) > 1:
+            os.system("cp " + curr_NN_filepath + " " + output_folder)
+            copied_file_list.append(curr_NN_filepath)
+            dist_dict[curr_filename] = min_dist
     pickle.dump(dist_dict, open(dist_list_filename, "wb"))
 
 def collect_LPIPS_NN(loss_fn_vgg, file_path, database_folder, output_folder, dist_list_filename, DEVICE):
@@ -106,5 +112,6 @@ if __name__ == '__main__':
     
     generate_LPIPS_NN(img_folder, database_folder, output_root, start_idx, end_idx, DEVICE)
 
-# python create_sample_LPIPSNN.py --startIdx 0 --endIdx 3 --gpu 1
-# python create_sample_LPIPSNN.py --startIdx 3 --endIdx 6 --gpu 1
+# python create_sample_LPIPSNN.py --startIdx 0 --endIdx 2 --gpu 1
+# python create_sample_LPIPSNN.py --startIdx 2 --endIdx 4 --gpu 1
+# python create_sample_LPIPSNN.py --startIdx 4 --endIdx 6 --gpu 1
