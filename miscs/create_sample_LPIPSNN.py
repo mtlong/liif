@@ -10,8 +10,10 @@ from torchvision import transforms
 import lpips
 import argparse
 
-CROP_LIST = [48, 48 * 2, 48 * 3, 48 * 4, 48 * 6, 48 * 7]
-SAMPLING_LIST = [50, 30, 16, 9, 4, 2]
+# CROP_LIST = [48, 48 * 2, 48 * 3, 48 * 4, 48 * 6, 48 * 7]
+# SAMPLING_LIST = [50, 30, 16, 9, 4, 2]
+CROP_LIST = [48 * 3, 48 * 4, 48 * 6, 48 * 7]
+SAMPLING_LIST = [16, 9, 4, 2]
 FILE_LIST = ["0802.png", "0803.png", 
              "0804.png", "0809.png", 
              "0810.png", "0818.png", 
